@@ -20,6 +20,7 @@ The two pages are connected via Angular routing.
   - Edit user (modal)
   - View user (read-only modal)
   - Delete user (confirmation dialog)
+- Loading indicator while state initializes
 - Frontend-only state management (no backend, no external APIs)
 - State survives page navigation
 
@@ -34,9 +35,11 @@ The two pages are connected via Angular routing.
 - **UI**
   - PrimeNG components (table, dialog, buttons, confirm dialog)
   - PrimeIcons for icons (no global PrimeNG theme applied)
+  - Reusable standalone confirm dialog component
 - **State**
   - In-memory state stored in a service using signals
   - LocalStorage persistence included (enabled by default); remove/skip `persist()` if you prefer purely in-memory
+  - Loading flag exposed to gate UI while state hydrates
 - **Styling**
   - SCSS with variables and nesting
   - Component-scoped styles
