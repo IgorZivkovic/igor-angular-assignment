@@ -3,12 +3,12 @@ import { RouterLink } from '@angular/router';
 import { UserService } from '../../services/user-service';
 import { UserTableComponent } from '../../components/user-table-component/user-table-component';
 import { ButtonModule } from 'primeng/button';
-import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
 import {
   UserDialogComponent,
   UserDialogMode,
 } from '../../components/user-dialog-component/user-dialog-component';
+import { ConfirmDialogComponent } from '../../components/confirm-dialog-component/confirm-dialog-component';
 import { User } from '../../models/user.model';
 
 @Component({
@@ -19,7 +19,7 @@ import { User } from '../../models/user.model';
     RouterLink,
     UserTableComponent,
     UserDialogComponent,
-    ConfirmDialogModule,
+    ConfirmDialogComponent,
   ],
   templateUrl: './users-page-component.html',
   styleUrl: './users-page-component.scss',
