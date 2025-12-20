@@ -1,0 +1,22 @@
+ :host {
+  display: block;
+}
+
+.users-header {
+  margin-bottom: 0.75rem;
+}
+
+.actions-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.actions-bar a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  text-decoration: none;
+}
