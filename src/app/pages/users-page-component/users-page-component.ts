@@ -1,13 +1,13 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { UserService } from '../../services/user-service';
+import { UserTableComponent } from '../../components/user-table-component/user-table-component';
 import { ButtonModule } from 'primeng/button';
-import { TableModule } from 'primeng/table';
 
 @Component({
   selector: 'app-users-page-component',
   standalone: true,
-  imports: [ButtonModule, TableModule, RouterLink],
+  imports: [ButtonModule, RouterLink, UserTableComponent],
   templateUrl: './users-page-component.html',
   styleUrl: './users-page-component.scss',
 })
