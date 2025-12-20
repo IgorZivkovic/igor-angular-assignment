@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Output, effect, inject, input } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 
@@ -15,6 +16,7 @@ export type UserDialogMode = 'add' | 'edit' | 'view';
   selector: 'app-user-dialog-component',
   standalone: true,
   imports: [
+    CommonModule,
     DialogModule,
     ButtonModule,
     InputTextModule,
