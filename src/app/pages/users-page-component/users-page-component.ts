@@ -1,11 +1,12 @@
 import { Component, inject } from '@angular/core';
 import { UserService } from '../../services/user-service';
 import { ButtonModule } from 'primeng/button';
+import { TableModule } from 'primeng/table';
 
 @Component({
   selector: 'app-users-page-component',
   standalone: true,
-  imports: [ButtonModule],
+  imports: [ButtonModule, TableModule],
   templateUrl: './users-page-component.html',
   styleUrl: './users-page-component.scss',
 })
