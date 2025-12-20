@@ -99,11 +99,6 @@ export class UserDialogComponent {
 
   onShow(): void {
     this.setupForm();
-
-    const active = document.activeElement as HTMLElement | null;
-    if (active) {
-      active.blur();
-    }
   }
 
   onSave(): void {
