@@ -62,7 +62,7 @@ export class UserDialogComponent {
     }
   }
 
-  initFromUser(): void {
+  setupForm(): void {
     const u = this.user();
 
     if (!u) {
@@ -98,7 +98,7 @@ export class UserDialogComponent {
   }
 
   onShow(): void {
-    this.initFromUser();
+    this.setupForm();
 
     const active = document.activeElement as HTMLElement | null;
     if (active) {
