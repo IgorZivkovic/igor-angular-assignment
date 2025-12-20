@@ -7,7 +7,7 @@
 >
   <ng-template pTemplate="header">
     <tr>
-      <th>ID</th>
+      <th>#</th>
       <th>Name</th>
       <th>Birthday</th>
       <th>Gender</th>
@@ -15,9 +15,9 @@
       <th>Actions</th>
     </tr>
   </ng-template>
-  <ng-template pTemplate="body" let-user>
+  <ng-template pTemplate="body" let-user let-rowIndex="rowIndex">
     <tr>
-      <td>{{ user.id }}</td>
+      <td>{{ rowIndex + 1 }}</td>
       <td>{{ user.name }}</td>
       <td>{{ user.birthday | date: 'MMM d, y' }}</td>
       <td>{{ user.gender }}</td>
