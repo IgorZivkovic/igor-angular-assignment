@@ -10,24 +10,24 @@
   gap: 0.25rem;
 }
 
-.error {
-  color: #b91c1c;
-  font-size: 0.85rem;
-}
-
 .field input,
 .field p-select,
 .field p-datepicker {
   width: 100%;
 }
 
-:host ::ng-deep .field .p-inputtext,
-:host ::ng-deep .field .p-select,
-:host ::ng-deep .field .p-datepicker {
+.error {
+  color: #b91c1c;
+  font-size: 0.85rem;
+}
+
+.p-inputtext,
+.p-select,
+.p-datepicker {
   width: 100%;
 }
 
-:host ::ng-deep .user-dialog {
+.user-dialog {
   width: 480px;
   max-width: 95vw;
 }

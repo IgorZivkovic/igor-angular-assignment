@@ -23,7 +23,6 @@
   justify-content: center;
 }
 
-:host ::ng-deep .users-table th,
-:host ::ng-deep .users-table td {
-  text-align: center !important;
+.center-cell {
+  text-align: center;
 }

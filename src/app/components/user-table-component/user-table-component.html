@@ -7,22 +7,22 @@
 >
   <ng-template pTemplate="header">
     <tr>
-      <th>#</th>
-      <th>Name</th>
-      <th>Birthday</th>
-      <th>Gender</th>
-      <th>Country</th>
-      <th>Actions</th>
+      <th class="center-cell">#</th>
+      <th class="center-cell">Name</th>
+      <th class="center-cell">Birthday</th>
+      <th class="center-cell">Gender</th>
+      <th class="center-cell">Country</th>
+      <th class="center-cell">Actions</th>
     </tr>
   </ng-template>
   <ng-template pTemplate="body" let-user let-rowIndex="rowIndex">
     <tr>
-      <td>{{ rowIndex + 1 }}</td>
-      <td>{{ user.name }}</td>
-      <td>{{ user.birthday | date: 'MMM d, y' }}</td>
-      <td>{{ user.gender }}</td>
-      <td>{{ user.country }}</td>
-      <td class="actions-cell">
+      <td class="center-cell">{{ rowIndex + 1 }}</td>
+      <td class="center-cell">{{ user.name }}</td>
+      <td class="center-cell">{{ user.birthday | date: 'MMM d, y' }}</td>
+      <td class="center-cell">{{ user.gender }}</td>
+      <td class="center-cell">{{ user.country }}</td>
+      <td class="actions-cell center-cell">
         <p-button
           label="View"
           icon="pi pi-eye"
