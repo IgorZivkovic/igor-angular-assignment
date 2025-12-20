@@ -5,6 +5,8 @@
   [draggable]="false"
   [resizable]="false"
   styleClass="user-dialog"
+  (visibleChange)="visible.set($event)"
+  (onShow)="handleShow()"
   (onHide)="onHide()"
 >
   <form [formGroup]="form" class="form">

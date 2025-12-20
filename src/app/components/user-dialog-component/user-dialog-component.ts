@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Output, effect, inject, input } from '@angular/core';
+import { Component, EventEmitter, Output, effect, inject, input, model } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 
 import { DialogModule } from 'primeng/dialog';
@@ -33,7 +33,7 @@ export class UserDialogComponent {
   private lastUser: User | null = null;
   private lastMode: UserDialogMode = 'add';
 
-  readonly visible = input<boolean>(false);
+  readonly visible = model<boolean>(false);
   readonly mode = input<UserDialogMode>('add');
   readonly user = input<User | null>(null);
 
@@ -71,8 +71,7 @@ export class UserDialogComponent {
     const user = this.user();
 
     const shouldInit =
-      isVisible &&
-      (!this.lastVisible || user !== this.lastUser || mode !== this.lastMode);
+      isVisible && (!this.lastVisible || user !== this.lastUser || mode !== this.lastMode);
 
     this.lastVisible = isVisible;
     this.lastUser = user;
@@ -114,6 +113,7 @@ export class UserDialogComponent {
   }
 
   onHide(): void {
+    this.visible.set(false);
     this.close.emit();
   }
 
