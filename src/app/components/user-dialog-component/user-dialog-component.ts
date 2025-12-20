@@ -27,6 +27,9 @@ export type UserDialogMode = 'add' | 'edit' | 'view';
 })
 export class UserDialogComponent {
   private readonly fb = inject(FormBuilder);
+  private lastVisible = false;
+  private lastUser: User | null = null;
+  private lastMode: UserDialogMode = 'add';
 
   readonly visible = input<boolean>(false);
   readonly mode = input<UserDialogMode>('add');
@@ -62,10 +65,18 @@ export class UserDialogComponent {
 
   private readonly initEffect = effect(() => {
     const isVisible = this.visible();
-    this.mode();
-    this.user();
+    const mode = this.mode();
+    const user = this.user();
 
-    if (isVisible) {
+    const shouldInit =
+      isVisible &&
+      (!this.lastVisible || user !== this.lastUser || mode !== this.lastMode);
+
+    this.lastVisible = isVisible;
+    this.lastUser = user;
+    this.lastMode = mode;
+
+    if (shouldInit) {
       this.initFromUser();
     }
   });
