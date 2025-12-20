@@ -1,3 +1,9 @@
+<div class="users-header">
+  <h2>Users</h2>
+
+  <p-button label="Add User" icon="pi pi-plus" (onClick)="addUser()" />
+</div>
+
 @if (users().length === 0) {
 <div class="empty">No users yet. Click “Add User” to create one.</div>
 } @if (users().length > 0) {
