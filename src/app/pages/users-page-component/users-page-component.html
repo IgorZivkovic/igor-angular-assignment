@@ -7,7 +7,15 @@
     <i class="pi pi-arrow-left"></i>
     Back to Landing Page
   </a>
-  <p-button label="Add User" icon="pi pi-plus" (onClick)="addUser()" />
+  <p-button label="Add User" icon="pi pi-plus" (onClick)="openAdd()" />
+
+  <app-user-dialog-component
+    [visible]="dialogVisible()"
+    [mode]="dialogMode()"
+    [user]="selectedUser()"
+    (close)="handleClose()"
+    (save)="handleSave($event)"
+  ></app-user-dialog-component>
 </div>
 
 <app-user-table-component [users]="users()" />
