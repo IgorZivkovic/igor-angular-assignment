@@ -1,12 +1,4 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnChanges,
-  Output,
-  SimpleChanges,
-  inject,
-} from '@angular/core';
+import { Component, EventEmitter, Output, effect, inject, input } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 
 import { DialogModule } from 'primeng/dialog';
@@ -33,12 +25,12 @@ export type UserDialogMode = 'add' | 'edit' | 'view';
   templateUrl: './user-dialog-component.html',
   styleUrl: './user-dialog-component.scss',
 })
-export class UserDialogComponent implements OnChanges {
+export class UserDialogComponent {
   private readonly fb = inject(FormBuilder);
 
-  @Input({ required: true }) visible = false;
-  @Input({ required: true }) mode: UserDialogMode = 'add';
-  @Input() user: User | null = null;
+  readonly visible = input<boolean>(false);
+  readonly mode = input<UserDialogMode>('add');
+  readonly user = input<User | null>(null);
 
   @Output() close = new EventEmitter<void>();
   @Output() save = new EventEmitter<User>();
@@ -58,7 +50,7 @@ export class UserDialogComponent implements OnChanges {
   });
 
   get header(): string {
-    switch (this.mode) {
+    switch (this.mode()) {
       case 'add':
         return 'Add User';
       case 'edit':
@@ -68,18 +60,18 @@ export class UserDialogComponent implements OnChanges {
     }
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    const becameVisible = changes['visible']?.currentValue === true;
-    const updatedWhileOpen =
-      (changes['user'] || changes['mode']) && this.visible;
+  private readonly initEffect = effect(() => {
+    const isVisible = this.visible();
+    this.mode();
+    this.user();
 
-    if (becameVisible || updatedWhileOpen) {
+    if (isVisible) {
       this.initFromUser();
     }
-  }
+  });
 
   initFromUser(): void {
-    const u = this.user;
+    const u = this.user();
 
     if (!u) {
       this.form.reset({
@@ -99,7 +91,7 @@ export class UserDialogComponent implements OnChanges {
       });
     }
 
-    if (this.mode === 'view') {
+    if (this.mode() === 'view') {
       this.form.disable();
     } else {
       this.form.enable();
