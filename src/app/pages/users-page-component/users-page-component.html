@@ -1,1 +1,9 @@
-<p>users-page-component works!</p>
+@if (users().length === 0) {
+<div class="empty">No users yet. Click “Add User” to create one.</div>
+} @if (users().length > 0) {
+<ul>
+  @for (user of users(); track user.id) {
+  <li>{{ user.name }} – {{ user.country }}</li>
+  }
+</ul>
+}

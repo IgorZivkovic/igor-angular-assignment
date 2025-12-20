@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { UserService } from '../../services/user-service';
 
 @Component({
   selector: 'app-users-page-component',
@@ -7,4 +8,8 @@ import { Component } from '@angular/core';
   templateUrl: './users-page-component.html',
   styleUrl: './users-page-component.scss',
 })
-export class UsersPageComponent {}
+export class UsersPageComponent {
+  private readonly userService = inject(UserService);
+
+  readonly users = this.userService.users;
+}
