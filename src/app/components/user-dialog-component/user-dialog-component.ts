@@ -62,8 +62,8 @@ export class UserDialogComponent {
     }
   }
 
-  setupForm(): void {
-    const u = this.user();
+  setupForm(user: User | null = this.user(), mode: UserDialogMode = this.mode()): void {
+    const u = user;
 
     if (!u) {
       this.form.reset({
@@ -83,7 +83,7 @@ export class UserDialogComponent {
       });
     }
 
-    if (this.mode() === 'view') {
+    if (mode === 'view') {
       this.form.disable();
     } else {
       this.form.enable();
@@ -95,10 +95,6 @@ export class UserDialogComponent {
   onHide(): void {
     this.visible.set(false);
     this.close.emit();
-  }
-
-  onShow(): void {
-    this.setupForm();
   }
 
   onSave(): void {

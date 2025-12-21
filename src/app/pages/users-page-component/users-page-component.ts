@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, ViewChild, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { UserService } from '../../services/user-service';
 import { UserTableComponent } from '../../components/user-table-component/user-table-component';
@@ -26,6 +26,8 @@ import { User } from '../../models/user.model';
   providers: [ConfirmationService],
 })
 export class UsersPageComponent {
+  @ViewChild(UserDialogComponent) dialogComponent?: UserDialogComponent;
+
   private readonly userService = inject(UserService);
   private readonly confirmationService = inject(ConfirmationService);
 
@@ -38,6 +40,7 @@ export class UsersPageComponent {
   openAdd(): void {
     this.dialogMode.set('add');
     this.selectedUser.set(null);
+    this.dialogComponent?.setupForm(null, 'add');
     this.dialogVisible.set(true);
   }
 
@@ -48,12 +51,14 @@ export class UsersPageComponent {
   openEdit(user: User): void {
     this.dialogMode.set('edit');
     this.selectedUser.set(user);
+    this.dialogComponent?.setupForm(user, 'edit');
     this.dialogVisible.set(true);
   }
 
   openView(user: User): void {
     this.dialogMode.set('view');
     this.selectedUser.set(user);
+    this.dialogComponent?.setupForm(user, 'view');
     this.dialogVisible.set(true);
   }
 
