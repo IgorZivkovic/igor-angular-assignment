@@ -6,6 +6,10 @@
     "target": "ES2022",
     "module": "preserve",
     "skipLibCheck": true,
-    "baseUrl": "."
+    "baseUrl": ".",
+    "paths": {
+      "@shared": ["shared/src/index.ts"],
+      "@shared/*": ["shared/src/*"]
+    }
   }
 }
