@@ -88,6 +88,12 @@ Health check:
 GET http://localhost:3000/api/v1/health
 ```
 
+Swagger docs:
+
+```
+http://localhost:3000/api/v1/docs
+```
+
 Users endpoints:
 
 ```
