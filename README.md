@@ -59,6 +59,8 @@ The two pages are connected via Angular routing.
 
 ## Running the project
 
+Defaults are provided in `.env` (tracked); adjust values there if needed.
+
 Frontend (web):
 
 ```bash
