@@ -26,6 +26,8 @@ The two pages are connected via Angular routing.
   - View user (read-only modal)
   - Delete user (confirmation dialog)
 - Pagination and filtering (search + gender)
+- Validation errors with consistent error codes
+- Swagger documentation for API endpoints
 - Loading indicator while API requests are in flight
 
 ## Technical Details
@@ -49,15 +51,21 @@ The two pages are connected via Angular routing.
   - SCSS with variables and nesting
   - Component-scoped styles
   - Responsive layout
- - **Backend**
+- **Backend (NestJS v11)**
+  - REST API with versioned routes (`/api/v1`)
+  - DTO validation with global pipes
+  - Global exception filter with error codes
   - Request logging middleware (method, path, status, duration)
+  - Swagger docs at `/api/v1/docs`
+- **Shared**
+  - Shared `User`/`Gender` types via `@shared/*`
 
 ## Architecture
 
-- Pages orchestrate routing and state interactions
-- Presentational components handle table rendering
-- Dialog component encapsulates form logic and modes (add/edit/view)
-- Service owns application state
+- Pages orchestrate routing, filters, and modal interactions
+- Presentational components handle table rendering and dialogs
+- Frontend service owns UI state and delegates CRUD to the API
+- Backend uses a controller/service split with a shared database service
 
 ## Running the project
 
