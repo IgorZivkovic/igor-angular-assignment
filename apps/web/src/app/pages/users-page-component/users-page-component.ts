@@ -1,22 +1,28 @@
 import { Component, ViewChild, inject, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { UserService } from '../../services/user-service';
 import { UserTableComponent } from '../../components/user-table-component/user-table-component';
 import { ButtonModule } from 'primeng/button';
 import { ConfirmationService } from 'primeng/api';
+import { InputTextModule } from 'primeng/inputtext';
+import { SelectModule } from 'primeng/select';
 import {
   UserDialogComponent,
   UserDialogMode,
 } from '../../components/user-dialog-component/user-dialog-component';
 import { ConfirmDialogComponent } from '../../components/confirm-dialog-component/confirm-dialog-component';
-import { User } from '../../models/user.model';
+import { Gender, User } from '../../models/user.model';
 
 @Component({
   selector: 'app-users-page-component',
   standalone: true,
   imports: [
+    FormsModule,
     ButtonModule,
     RouterLink,
+    InputTextModule,
+    SelectModule,
     UserTableComponent,
     UserDialogComponent,
     ConfirmDialogComponent,
@@ -33,9 +39,26 @@ export class UsersPageComponent {
 
   readonly users = this.userService.users;
   readonly loading = this.userService.loading;
+  readonly total = this.userService.total;
   readonly dialogVisible = signal(false);
   readonly dialogMode = signal<UserDialogMode>('add');
   readonly selectedUser = signal<User | null>(null);
+
+  searchTerm = '';
+  genderFilter: Gender | 'all' = 'all';
+  first = 0;
+  readonly pageSize = 10;
+
+  readonly genderOptions: { label: string; value: Gender | 'all' }[] = [
+    { label: 'All', value: 'all' },
+    { label: 'Male', value: 'male' },
+    { label: 'Female', value: 'female' },
+    { label: 'Other', value: 'other' },
+  ];
+
+  constructor() {
+    this.loadUsers();
+  }
 
   openAdd(): void {
     this.dialogMode.set('add');
@@ -90,6 +113,36 @@ export class UsersPageComponent {
           this.dialogMode.set('add');
         }
       },
+    });
+  }
+
+  handleSearchChange(value: string): void {
+    this.searchTerm = value;
+    this.first = 0;
+    this.loadUsers(1);
+  }
+
+  handleGenderChange(value: Gender | 'all'): void {
+    this.genderFilter = value;
+    this.first = 0;
+    this.loadUsers(1);
+  }
+
+  handlePageChange(event: { first: number; rows: number }): void {
+    if (event.first === this.first) {
+      return;
+    }
+    this.first = event.first;
+    const nextPage = Math.floor(this.first / this.pageSize) + 1;
+    this.loadUsers(nextPage, this.pageSize);
+  }
+
+  private loadUsers(page = 1, pageSize = this.pageSize): void {
+    this.userService.fetchFromApi({
+      page,
+      pageSize,
+      search: this.searchTerm,
+      gender: this.genderFilter,
     });
   }
 }

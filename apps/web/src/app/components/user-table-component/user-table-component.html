@@ -1,5 +1,11 @@
 <p-table
   [value]="users"
+  [lazy]="true"
+  [paginator]="true"
+  [first]="first"
+  [rows]="pageSize"
+  [totalRecords]="totalRecords"
+  (onPage)="pageChange.emit({ first: $event.first, rows: $event.rows })"
   dataKey="id"
   responsiveLayout="stack"
   breakpoint="640px"
@@ -7,7 +13,7 @@
 >
   <ng-template pTemplate="header">
     <tr>
-      <th class="center-cell">#</th>
+      <th class="center-cell">ID</th>
       <th class="center-cell">Name</th>
       <th class="center-cell">Birthday</th>
       <th class="center-cell">Gender</th>
@@ -15,9 +21,9 @@
       <th class="center-cell">Actions</th>
     </tr>
   </ng-template>
-  <ng-template pTemplate="body" let-user let-rowIndex="rowIndex">
+  <ng-template pTemplate="body" let-user>
     <tr>
-      <td class="center-cell">{{ rowIndex + 1 }}</td>
+      <td class="center-cell">{{ user.id }}</td>
       <td class="center-cell">{{ user.name }}</td>
       <td class="center-cell">{{ user.birthday | date: 'MMM d, y' }}</td>
       <td class="center-cell">{{ user.gender }}</td>

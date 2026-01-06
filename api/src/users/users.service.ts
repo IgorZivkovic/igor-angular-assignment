@@ -1,16 +1,55 @@
 import { Injectable } from '@nestjs/common';
-import { asc, eq } from 'drizzle-orm';
+import { and, asc, eq, like, or, sql } from 'drizzle-orm';
 import { DatabaseService } from '../db/db.service';
 import { users } from '../db/schema';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UsersQueryDto } from './dto/users-query.dto';
 
 @Injectable()
 export class UsersService {
   constructor(private readonly database: DatabaseService) {}
 
-  findAll() {
-    return this.database.db.select().from(users).orderBy(asc(users.id)).all();
+  findAll(query: UsersQueryDto = {}) {
+    const page = Math.max(1, query.page ?? 1);
+    const pageSize = Math.min(100, Math.max(1, query.pageSize ?? 10));
+    const search = query.search?.trim();
+    const gender = query.gender;
+
+    const filters = [];
+    if (search) {
+      const term = `%${search}%`;
+      filters.push(or(like(users.name, term), like(users.country, term)));
+    }
+    if (gender) {
+      filters.push(eq(users.gender, gender));
+    }
+
+    const whereClause =
+      filters.length === 0 ? undefined : filters.length === 1 ? filters[0] : and(...filters);
+
+    const baseQuery = this.database.db.select().from(users);
+    const dataQuery = whereClause ? baseQuery.where(whereClause) : baseQuery;
+    const data = dataQuery
+      .orderBy(asc(users.id))
+      .limit(pageSize)
+      .offset((page - 1) * pageSize)
+      .all();
+
+    const countQuery = this.database.db.select({ count: sql<number>`count(*)` }).from(users);
+    const countRow = (whereClause ? countQuery.where(whereClause) : countQuery).get();
+    const total = Number(countRow?.count ?? 0);
+    const totalPages = Math.max(1, Math.ceil(total / pageSize));
+
+    return {
+      data,
+      pagination: {
+        page,
+        pageSize,
+        total,
+        totalPages,
+      },
+    };
   }
 
   findById(id: number) {

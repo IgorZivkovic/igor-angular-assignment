@@ -14,6 +14,30 @@
     </div>
   </header>
 
+  <div class="filters-card">
+    <div class="filters-row">
+      <span class="p-input-icon-left filter-field">
+        <i class="pi pi-search"></i>
+        <input
+          pInputText
+          type="text"
+          placeholder="Search by name or country"
+          [ngModel]="searchTerm"
+          (ngModelChange)="handleSearchChange($event)"
+        />
+      </span>
+      <p-select
+        [options]="genderOptions"
+        optionLabel="label"
+        optionValue="value"
+        [ngModel]="genderFilter"
+        (onChange)="handleGenderChange($event.value)"
+        placeholder="Gender"
+        styleClass="filter-field filters-select"
+      ></p-select>
+    </div>
+  </div>
+
   <app-user-dialog-component
     [visible]="dialogVisible()"
     [mode]="dialogMode()"
@@ -31,9 +55,13 @@
   <div class="table-card">
     <app-user-table-component
       [users]="users()"
+      [first]="first"
+      [totalRecords]="total()"
+      [pageSize]="pageSize"
       (view)="openView($event)"
       (edit)="openEdit($event)"
       (remove)="handleDelete($event)"
+      (pageChange)="handlePageChange($event)"
     />
   </div>
   }

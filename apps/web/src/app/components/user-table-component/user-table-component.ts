@@ -13,8 +13,12 @@ import { User } from '../../models/user.model';
 })
 export class UserTableComponent {
   @Input({ required: true }) users: User[] = [];
+  @Input() first = 0;
+  @Input() totalRecords = 0;
+  @Input() pageSize = 10;
 
   @Output() view = new EventEmitter<User>();
   @Output() edit = new EventEmitter<User>();
   @Output() remove = new EventEmitter<User>();
+  @Output() pageChange = new EventEmitter<{ first: number; rows: number }>();
 }

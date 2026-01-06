@@ -96,6 +96,12 @@ PUT    /api/v1/users/:id
 DELETE /api/v1/users/:id
 ```
 
+Pagination and filtering for the list endpoint:
+
+```
+GET /api/v1/users?page=1&pageSize=10&search=ana&gender=female
+```
+
 Both apps in parallel:
 
 ```bash
