@@ -3,7 +3,7 @@
  * This is only a minimal backend to get started.
  */
 
-import { Logger } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app/app.module';
@@ -14,6 +14,13 @@ async function bootstrap() {
   const apiPrefix = config.get('API_PREFIX', 'api');
   const apiVersion = config.get('API_VERSION', 'v1');
   const webOrigin = config.get('WEB_ORIGIN', 'http://localhost:4200');
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
+    }),
+  );
   app.enableCors({
     origin: webOrigin,
   });

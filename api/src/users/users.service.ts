@@ -1,11 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { asc, eq } from 'drizzle-orm';
-import type { User } from '@shared';
 import { DatabaseService } from '../db/db.service';
 import { users } from '../db/schema';
-
-type CreateUserInput = Omit<User, 'id'>;
-type UpdateUserInput = Omit<User, 'id'>;
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -19,14 +17,18 @@ export class UsersService {
     return this.database.db.select().from(users).where(eq(users.id, id)).get();
   }
 
-  create(input: CreateUserInput) {
+  create(input: CreateUserDto) {
     const result = this.database.db.insert(users).values(input).run();
     const id = Number(result.lastInsertRowid);
     return this.findById(id);
   }
 
-  update(id: number, input: UpdateUserInput) {
-    const result = this.database.db.update(users).set(input).where(eq(users.id, id)).run();
+  update(id: number, input: UpdateUserDto) {
+    const updatePayload = this.cleanUpdatePayload(input);
+    if (Object.keys(updatePayload).length === 0) {
+      return this.findById(id);
+    }
+    const result = this.database.db.update(users).set(updatePayload).where(eq(users.id, id)).run();
     if (result.changes === 0) {
       return null;
     }
@@ -36,5 +38,16 @@ export class UsersService {
   remove(id: number) {
     const result = this.database.db.delete(users).where(eq(users.id, id)).run();
     return result.changes > 0;
+  }
+
+  private cleanUpdatePayload(input: UpdateUserDto) {
+    const payload: Partial<UpdateUserDto> = {};
+    (['name', 'birthday', 'gender', 'country'] as const).forEach((key) => {
+      const value = input[key];
+      if (value !== undefined) {
+        payload[key] = value;
+      }
+    });
+    return payload;
   }
 }

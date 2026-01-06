@@ -1,9 +1,7 @@
 import { Body, Controller, Delete, Get, NotFoundException, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
-import type { User } from '@shared';
 import { UsersService } from './users.service';
-
-type CreateUserInput = Omit<User, 'id'>;
-type UpdateUserInput = Omit<User, 'id'>;
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller('users')
 export class UsersController {
@@ -24,12 +22,12 @@ export class UsersController {
   }
 
   @Post()
-  create(@Body() body: CreateUserInput) {
+  create(@Body() body: CreateUserDto) {
     return this.usersService.create(body);
   }
 
   @Put(':id')
-  update(@Param('id', ParseIntPipe) id: number, @Body() body: UpdateUserInput) {
+  update(@Param('id', ParseIntPipe) id: number, @Body() body: UpdateUserDto) {
     const user = this.usersService.update(id, body);
     if (!user) {
       throw new NotFoundException(`User ${id} not found`);
