@@ -1,6 +1,8 @@
 # User Management Angular Demo
 
-Small Angular v21 application built as a take-home assignment.
+Small Angular v21 application demonstrating a user management UI.
+
+This repo is an Nx workspace. The Angular app lives at `apps/web`.
 
 ## Overview
 
@@ -56,7 +58,23 @@ The two pages are connected via Angular routing.
 
 ```bash
 npm install
-npm start  # or ng serve
+npm start  # runs: nx serve web
 ```
 
 Then open http://localhost:4200/.
+
+## Nx workspace notes
+
+Common tasks:
+
+```bash
+nx serve web
+nx build web
+nx test web
+```
+
+You can also inspect the project graph with:
+
+```bash
+nx graph
+```

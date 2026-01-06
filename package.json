@@ -3,10 +3,10 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "nx serve",
-    "build": "nx build",
-    "watch": "nx build --watch --configuration development",
-    "test": "nx test"
+    "start": "nx serve web",
+    "build": "nx build web",
+    "watch": "nx build web --watch --configuration development",
+    "test": "nx test web"
   },
   "prettier": {
     "printWidth": 100,
