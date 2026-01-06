@@ -102,6 +102,8 @@ Both apps in parallel:
 npm run start:all
 ```
 
+The Users page pulls data from the API (`GET /api/v1/users`), so make sure the API is running before opening `/users`.
+
 Build:
 
 ```bash
