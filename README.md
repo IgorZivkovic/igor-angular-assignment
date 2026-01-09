@@ -31,6 +31,14 @@ The two pages are connected via Angular routing.
 - Loading indicator while API requests are in flight
 - JWT auth with short-lived access tokens and HttpOnly refresh cookie
 
+## Tech Stack
+
+- **Frontend:** Angular v21, RxJS, PrimeNG, PrimeIcons, SCSS
+- **Backend:** NestJS v11, Passport + JWT (local/jwt strategies), Swagger, class-validator/transformer
+- **Data:** Drizzle ORM, SQLite (better-sqlite3)
+- **Security:** Argon2 password hashing, HttpOnly refresh cookie
+- **Tooling:** Nx workspace, TypeScript, Webpack, ESLint, Prettier
+
 ## Technical Details
 
 - **Angular v21**
