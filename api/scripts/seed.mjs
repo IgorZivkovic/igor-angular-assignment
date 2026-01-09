@@ -1,12 +1,15 @@
 import 'dotenv/config';
 import Database from 'better-sqlite3';
-import { sql } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/better-sqlite3';
 import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core';
+import * as argon2 from 'argon2';
 
 const dbPath = process.env.DATABASE_URL ?? './user_management.db';
 const targetCount = Number(process.env.SEED_COUNT ?? '60');
 const forceSeed = process.env.SEED_FORCE === '1';
+const adminEmail = (process.env.ADMIN_EMAIL ?? 'admin@example.com').trim().toLowerCase();
+const adminPassword = process.env.ADMIN_PASSWORD ?? 'admin12345';
 
 const sqlite = new Database(dbPath);
 const db = drizzle(sqlite);
@@ -19,29 +22,73 @@ const users = sqliteTable('users', {
   country: text('country', { length: 120 }).notNull(),
 });
 
-const existing = db.select({ count: sql`count(*)` }).from(users).get();
-const existingCount = Number(existing?.count ?? 0);
+const authUsers = sqliteTable('auth_users', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  email: text('email', { length: 160 }).notNull(),
+  passwordHash: text('password_hash', { length: 255 }).notNull(),
+  role: text('role', { enum: ['admin', 'user'] }).notNull(),
+  tokenVersion: integer('token_version').notNull().default(0),
+});
 
-if (!forceSeed && existingCount >= targetCount) {
-  console.log(`Seed skipped: ${existingCount} users already exist.`);
-  process.exit(0);
+await seedAdminUser();
+seedUsers();
+sqlite.close();
+
+async function seedAdminUser() {
+  let existingAdmin;
+  try {
+    existingAdmin = db
+      .select()
+      .from(authUsers)
+      .where(eq(authUsers.email, adminEmail))
+      .get();
+  } catch (error) {
+    console.warn('Auth users table missing. Run migrations before seeding auth users.');
+    return;
+  }
+
+  if (existingAdmin) {
+    console.log(`Auth seed skipped: ${adminEmail} already exists.`);
+    return;
+  }
+
+  const passwordHash = await argon2.hash(adminPassword);
+  db.insert(authUsers)
+    .values({
+      email: adminEmail,
+      passwordHash,
+      role: 'admin',
+      tokenVersion: 0,
+    })
+    .run();
+  console.log(`Seeded admin auth user: ${adminEmail}`);
 }
 
-if (forceSeed && existingCount > 0) {
-  db.delete(users).run();
+function seedUsers() {
+  const existing = db.select({ count: sql`count(*)` }).from(users).get();
+  const existingCount = Number(existing?.count ?? 0);
+
+  if (!forceSeed && existingCount >= targetCount) {
+    console.log(`Seed skipped: ${existingCount} users already exist.`);
+    return;
+  }
+
+  if (forceSeed && existingCount > 0) {
+    db.delete(users).run();
+  }
+
+  const toCreate = forceSeed ? targetCount : Math.max(0, targetCount - existingCount);
+  if (toCreate === 0) {
+    console.log('Seed skipped: nothing to insert.');
+    return;
+  }
+
+  const rng = mulberry32(42);
+  const seedUsers = generateUsers(toCreate, rng);
+
+  db.insert(users).values(seedUsers).run();
+  console.log(`Seeded ${seedUsers.length} users into ${dbPath}.`);
 }
-
-const toCreate = forceSeed ? targetCount : Math.max(0, targetCount - existingCount);
-if (toCreate === 0) {
-  console.log('Seed skipped: nothing to insert.');
-  process.exit(0);
-}
-
-const rng = mulberry32(42);
-const seedUsers = generateUsers(toCreate, rng);
-
-db.insert(users).values(seedUsers).run();
-console.log(`Seeded ${seedUsers.length} users into ${dbPath}.`);
 
 function generateUsers(count, random) {
   const firstNames = [

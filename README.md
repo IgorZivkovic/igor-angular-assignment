@@ -29,6 +29,7 @@ The two pages are connected via Angular routing.
 - Validation errors with consistent error codes
 - Swagger documentation for API endpoints
 - Loading indicator while API requests are in flight
+- JWT auth with short-lived access tokens and HttpOnly refresh cookie
 
 ## Technical Details
 
@@ -57,6 +58,7 @@ The two pages are connected via Angular routing.
   - Global exception filter with error codes
   - Request logging middleware (method, path, status, duration)
   - Swagger docs at `/api/v1/docs`
+  - Auth endpoints for login/refresh/logout/me
 - **Shared**
   - Shared `User`/`Gender` types via `@shared/*`
 
@@ -110,6 +112,22 @@ GET    /api/v1/users/:id
 POST   /api/v1/users
 PUT    /api/v1/users/:id
 DELETE /api/v1/users/:id
+```
+
+Auth endpoints:
+
+```
+POST /api/v1/auth/login
+POST /api/v1/auth/refresh
+POST /api/v1/auth/logout
+GET  /api/v1/auth/me
+```
+
+Default admin credentials (from `.env`):
+
+```
+ADMIN_EMAIL=admin@example.com
+ADMIN_PASSWORD=admin12345
 ```
 
 Pagination and filtering for the list endpoint:

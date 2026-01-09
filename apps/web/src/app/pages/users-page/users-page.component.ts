@@ -1,6 +1,6 @@
 import { Component, ViewChild, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { UserService } from '../../services/user.service';
 import { UserTableComponent } from '../../components/user-table/user-table.component';
 import { ButtonModule } from 'primeng/button';
@@ -13,6 +13,7 @@ import {
 } from '../../components/user-dialog/user-dialog.component';
 import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog.component';
 import { Gender, User } from '../../models/user.model';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-users-page',
@@ -36,6 +37,8 @@ export class UsersPageComponent {
 
   private readonly userService = inject(UserService);
   private readonly confirmationService = inject(ConfirmationService);
+  private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
 
   readonly users = this.userService.users;
   readonly loading = this.userService.loading;
@@ -112,6 +115,17 @@ export class UsersPageComponent {
           this.selectedUser.set(null);
           this.dialogMode.set('add');
         }
+      },
+    });
+  }
+
+  handleLogout(): void {
+    this.authService.logout().subscribe({
+      next: () => {
+        this.router.navigate(['/login']);
+      },
+      error: () => {
+        this.router.navigate(['/login']);
       },
     });
   }
