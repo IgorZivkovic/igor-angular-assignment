@@ -29,25 +29,27 @@
                 aria-label="View user"
                 (click)="view.emit(user)"
               ></button>
-              <button
-                tuiIconButton
-                appearance="flat"
-                size="s"
-                iconStart="@tui.code"
-                type="button"
-                aria-label="Edit user"
-                (click)="edit.emit(user)"
-              ></button>
-              <button
-                tuiIconButton
-                appearance="flat"
-                size="s"
-                iconStart="@tui.trash"
-                class="danger-action"
-                type="button"
-                aria-label="Delete user"
-                (click)="remove.emit(user)"
-              ></button>
+              @if (canManageUsers) {
+                <button
+                  tuiIconButton
+                  appearance="flat"
+                  size="s"
+                  iconStart="@tui.code"
+                  type="button"
+                  aria-label="Edit user"
+                  (click)="edit.emit(user)"
+                ></button>
+                <button
+                  tuiIconButton
+                  appearance="flat"
+                  size="s"
+                  iconStart="@tui.trash"
+                  class="danger-action"
+                  type="button"
+                  aria-label="Delete user"
+                  (click)="remove.emit(user)"
+                ></button>
+              }
             </div>
           </td>
         </tr>

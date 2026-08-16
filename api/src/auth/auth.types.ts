@@ -1,4 +1,6 @@
-export type AuthRole = 'admin' | 'user';
+import type { AuthRole } from '@shared';
+
+export type { AuthRole };
 
 export type AccessTokenPayload = {
   sub: number;

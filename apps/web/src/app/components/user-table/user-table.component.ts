@@ -16,6 +16,7 @@ export class UserTableComponent {
   @Input() first = 0;
   @Input() totalRecords = 0;
   @Input() pageSize = 10;
+  @Input() canManageUsers = false;
 
   @Output() view = new EventEmitter<User>();
   @Output() edit = new EventEmitter<User>();

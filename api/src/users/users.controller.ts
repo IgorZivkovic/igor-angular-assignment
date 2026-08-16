@@ -1,8 +1,19 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseIntPipe,
+  Post,
+  Put,
+  Query,
+} from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
   ApiCreatedResponse,
+  ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiTags,
@@ -15,6 +26,7 @@ import { UsersQueryDto } from './dto/users-query.dto';
 import { ErrorResponseDto } from '../common/dto/error-response.dto';
 import { UsersListResponseDto } from './dto/users-list-response.dto';
 import { UserResponseDto } from './dto/user-response.dto';
+import { Roles } from '../auth/decorators/roles.decorator';
 
 @ApiTags('Users')
 @ApiBearerAuth()
@@ -42,15 +54,19 @@ export class UsersController {
   }
 
   @Post()
+  @Roles('admin')
   @ApiCreatedResponse({ type: UserResponseDto })
   @ApiBadRequestResponse({ type: ErrorResponseDto })
+  @ApiForbiddenResponse({ type: ErrorResponseDto })
   create(@Body() body: CreateUserDto) {
     return this.usersService.create(body);
   }
 
   @Put(':id')
+  @Roles('admin')
   @ApiOkResponse({ type: UserResponseDto })
   @ApiBadRequestResponse({ type: ErrorResponseDto })
+  @ApiForbiddenResponse({ type: ErrorResponseDto })
   @ApiNotFoundResponse({ type: ErrorResponseDto })
   update(@Param('id', ParseIntPipe) id: number, @Body() body: UpdateUserDto) {
     const user = this.usersService.update(id, body);
@@ -61,8 +77,10 @@ export class UsersController {
   }
 
   @Delete(':id')
+  @Roles('admin')
   @ApiOkResponse({ schema: { example: { deleted: true } } })
   @ApiBadRequestResponse({ type: ErrorResponseDto })
+  @ApiForbiddenResponse({ type: ErrorResponseDto })
   @ApiNotFoundResponse({ type: ErrorResponseDto })
   remove(@Param('id', ParseIntPipe) id: number) {
     const removed = this.usersService.remove(id);

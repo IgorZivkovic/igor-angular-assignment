@@ -4,6 +4,8 @@ export function shared(): string {
 
 export type Gender = 'male' | 'female' | 'other';
 
+export type AuthRole = 'admin' | 'user';
+
 export interface User {
   id: number;
   name: string;

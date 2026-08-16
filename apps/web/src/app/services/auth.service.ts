@@ -1,6 +1,7 @@
-import { Injectable, signal } from '@angular/core';
+import { computed, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { catchError, map, of, tap } from 'rxjs';
+import type { AuthRole } from '@shared';
 import { environment } from '../../environments/environment';
 
 type AccessTokenResponse = {
@@ -12,14 +13,22 @@ type LoginPayload = {
   password: string;
 };
 
+type AccessTokenPayload = {
+  exp?: number;
+  role?: AuthRole;
+};
+
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
   private readonly apiBaseUrl = environment.apiBaseUrl;
   private readonly _accessToken = signal<string | null>(null);
+  private readonly _currentRole = signal<AuthRole | null>(null);
 
   readonly accessToken = this._accessToken.asReadonly();
+  readonly currentRole = this._currentRole.asReadonly();
+  readonly canManageUsers = computed(() => this._currentRole() === 'admin');
 
   constructor(private readonly http: HttpClient) {}
 
@@ -44,6 +53,7 @@ export class AuthService {
 
   clearAccessToken(): void {
     this._accessToken.set(null);
+    this._currentRole.set(null);
   }
 
   login(payload: LoginPayload) {
@@ -52,16 +62,16 @@ export class AuthService {
         withCredentials: true,
       })
       .pipe(
-      tap((response) => this._accessToken.set(response.accessToken)),
-      map(() => undefined),
-    );
+        tap((response) => this.setAccessToken(response.accessToken)),
+        map(() => undefined),
+      );
   }
 
   refreshAccessToken() {
     return this.http
       .post<AccessTokenResponse>(`${this.apiBaseUrl}/auth/refresh`, {}, { withCredentials: true })
       .pipe(
-        tap((response) => this._accessToken.set(response.accessToken)),
+        tap((response) => this.setAccessToken(response.accessToken)),
         map((response) => response.accessToken),
         catchError(() => {
           this.clearAccessToken();
@@ -83,7 +93,13 @@ export class AuthService {
       );
   }
 
-  private decodeJwt(token: string): { exp?: number } | null {
+  private setAccessToken(token: string): void {
+    this._accessToken.set(token);
+    const role = this.decodeJwt(token)?.role;
+    this._currentRole.set(role === 'admin' || role === 'user' ? role : null);
+  }
+
+  private decodeJwt(token: string): AccessTokenPayload | null {
     const parts = token.split('.');
     if (parts.length !== 3) {
       return null;
@@ -91,7 +107,7 @@ export class AuthService {
     try {
       const payload = parts[1].replace(/-/g, '+').replace(/_/g, '/');
       const decoded = atob(payload.padEnd(Math.ceil(payload.length / 4) * 4, '='));
-      return JSON.parse(decoded) as { exp?: number };
+      return JSON.parse(decoded) as AccessTokenPayload;
     } catch {
       return null;
     }

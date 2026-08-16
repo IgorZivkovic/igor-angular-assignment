@@ -2,12 +2,20 @@
   <div class="toolbar-content">
     <div class="toolbar-copy">
       <span class="toolbar-title">Users</span>
-      <span class="toolbar-subtitle">Add, edit, view, and delete users via modal.</span>
+      <span class="toolbar-subtitle">
+        {{
+          canManageUsers()
+            ? 'Administrator access: add, edit, view, and delete users.'
+            : 'Read-only access: view and filter users.'
+        }}
+      </span>
     </div>
 
     <span class="toolbar-spacer"></span>
 
-    <button tuiButton size="s" type="button" (click)="openAdd()">Add User</button>
+    @if (canManageUsers()) {
+      <button tuiButton size="s" type="button" (click)="openAdd()">Add User</button>
+    }
     <button tuiButton size="s" appearance="outline" type="button" (click)="handleLogout()">
       Logout
     </button>
@@ -75,6 +83,7 @@
         [first]="first"
         [totalRecords]="total()"
         [pageSize]="pageSize"
+        [canManageUsers]="canManageUsers()"
         (view)="openView($event)"
         (edit)="openEdit($event)"
         (remove)="handleDelete($event)"

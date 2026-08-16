@@ -10,6 +10,8 @@ const targetCount = Number(process.env.SEED_COUNT ?? '60');
 const forceSeed = process.env.SEED_FORCE === '1';
 const adminEmail = (process.env.ADMIN_EMAIL ?? 'admin@example.com').trim().toLowerCase();
 const adminPassword = process.env.ADMIN_PASSWORD ?? 'admin12345';
+const viewerEmail = (process.env.VIEWER_EMAIL ?? 'viewer@example.com').trim().toLowerCase();
+const viewerPassword = process.env.VIEWER_PASSWORD ?? 'viewer12345';
 
 const sqlite = new Database(dbPath);
 const db = drizzle(sqlite);
@@ -30,38 +32,46 @@ const authUsers = sqliteTable('auth_users', {
   tokenVersion: integer('token_version').notNull().default(0),
 });
 
-await seedAdminUser();
+await seedAuthUsers();
 seedUsers();
 sqlite.close();
 
-async function seedAdminUser() {
-  let existingAdmin;
+async function seedAuthUsers() {
+  const accounts = [
+    { email: adminEmail, password: adminPassword, role: 'admin' },
+    { email: viewerEmail, password: viewerPassword, role: 'user' },
+  ];
+
   try {
-    existingAdmin = db
-      .select()
-      .from(authUsers)
-      .where(eq(authUsers.email, adminEmail))
-      .get();
+    db.select({ id: authUsers.id }).from(authUsers).limit(1).get();
   } catch {
     console.warn('Auth users table missing. Run migrations before seeding auth users.');
     return;
   }
 
-  if (existingAdmin) {
-    console.log(`Auth seed skipped: ${adminEmail} already exists.`);
-    return;
-  }
+  for (const account of accounts) {
+    const existingAccount = db
+      .select()
+      .from(authUsers)
+      .where(eq(authUsers.email, account.email))
+      .get();
 
-  const passwordHash = await argon2.hash(adminPassword);
-  db.insert(authUsers)
-    .values({
-      email: adminEmail,
-      passwordHash,
-      role: 'admin',
-      tokenVersion: 0,
-    })
-    .run();
-  console.log(`Seeded admin auth user: ${adminEmail}`);
+    if (existingAccount) {
+      console.log(`Auth seed skipped: ${account.email} already exists.`);
+      continue;
+    }
+
+    const passwordHash = await argon2.hash(account.password);
+    db.insert(authUsers)
+      .values({
+        email: account.email,
+        passwordHash,
+        role: account.role,
+        tokenVersion: 0,
+      })
+      .run();
+    console.log(`Seeded ${account.role} auth user: ${account.email}`);
+  }
 }
 
 function seedUsers() {

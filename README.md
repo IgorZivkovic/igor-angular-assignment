@@ -32,6 +32,7 @@ The pages are connected via Angular routing, with `/users` protected by auth.
 - Swagger documentation for API endpoints
 - Loading indicator while API requests are in flight
 - JWT auth with short-lived access tokens and HttpOnly refresh cookie
+- Role-based access control (RBAC): admins manage users, regular users have read-only access
 
 ## Tech Stack
 
@@ -39,6 +40,7 @@ The pages are connected via Angular routing, with `/users` protected by auth.
 - **Backend:** NestJS v11, Passport + JWT (local/jwt strategies), Swagger, class-validator/transformer
 - **Data:** Drizzle ORM, SQLite (better-sqlite3)
 - **Security:** Argon2 password hashing, HttpOnly refresh cookie
+- **Authorization:** Backend-enforced `admin`/`user` roles with permission-aware Angular UI
 - **Tooling:** Nx workspace, TypeScript, Webpack, ESLint, Prettier
 
 ## Angular 22 upgrade note
@@ -143,12 +145,20 @@ POST /api/v1/auth/logout
 GET  /api/v1/auth/me
 ```
 
-Default admin credentials (from `.env`):
+Default demo credentials (from `.env`):
 
 ```
+# Full CRUD access
 ADMIN_EMAIL=admin@example.com
 ADMIN_PASSWORD=admin12345
+
+# Read-only access
+VIEWER_EMAIL=viewer@example.com
+VIEWER_PASSWORD=viewer12345
 ```
+
+The API enforces permissions independently from the UI. Both roles can use `GET /users` and
+`GET /users/:id`; only the `admin` role can use `POST`, `PUT`, and `DELETE` user endpoints.
 
 Pagination and filtering for the list endpoint:
 

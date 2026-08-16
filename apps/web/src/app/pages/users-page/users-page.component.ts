@@ -52,6 +52,7 @@ export class UsersPageComponent {
   readonly users = this.userService.users;
   readonly loading = this.userService.loading;
   readonly total = this.userService.total;
+  readonly canManageUsers = this.authService.canManageUsers;
   readonly dialogVisible = signal(false);
   readonly dialogMode = signal<UserDialogMode>('add');
   readonly selectedUser = signal<User | null>(null);
@@ -100,6 +101,10 @@ export class UsersPageComponent {
   }
 
   openAdd(): void {
+    if (!this.canManageUsers()) {
+      return;
+    }
+
     this.dialogMode.set('add');
     this.selectedUser.set(null);
     this.dialogComponent?.setupForm(null, 'add');
@@ -111,6 +116,10 @@ export class UsersPageComponent {
   }
 
   openEdit(user: User): void {
+    if (!this.canManageUsers()) {
+      return;
+    }
+
     this.dialogMode.set('edit');
     this.selectedUser.set(user);
     this.dialogComponent?.setupForm(user, 'edit');
@@ -125,6 +134,10 @@ export class UsersPageComponent {
   }
 
   handleSave(user: User): void {
+    if (!this.canManageUsers()) {
+      return;
+    }
+
     const request =
       this.dialogMode() === 'edit' ? this.userService.update(user) : this.userService.add(user);
 
@@ -145,6 +158,10 @@ export class UsersPageComponent {
   }
 
   handleDelete(user: User): void {
+    if (!this.canManageUsers()) {
+      return;
+    }
+
     this.userPendingDelete.set(user);
     this.confirmDeleteVisible.set(true);
   }
@@ -155,6 +172,11 @@ export class UsersPageComponent {
   }
 
   confirmDelete(): void {
+    if (!this.canManageUsers()) {
+      this.cancelDelete();
+      return;
+    }
+
     const user = this.userPendingDelete();
 
     if (!user) {
