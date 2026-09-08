@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
-use App\Enums\Gender;
+use App\Enums\Role;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
-#[Fillable(['name', 'birthday', 'gender', 'country'])]
-class User extends Model
+#[Fillable(['email', 'password', 'role'])]
+#[Hidden(['password'])]
+class AuthUser extends Authenticatable
 {
     public $timestamps = false;
 
@@ -19,8 +21,8 @@ class User extends Model
     protected function casts(): array
     {
         return [
-            'birthday' => 'date:Y-m-d',
-            'gender' => Gender::class,
+            'password' => 'hashed',
+            'role' => Role::class,
         ];
     }
 }
