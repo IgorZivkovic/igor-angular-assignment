@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\AuthUser;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -15,11 +16,18 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        fake()->seed(42);
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        User::factory()->count(60)->create();
+
+        AuthUser::factory()->admin()->create([
+            'email' => 'admin@example.com',
+            'password' => 'admin12345',
+        ]);
+
+        AuthUser::factory()->create([
+            'email' => 'viewer@example.com',
+            'password' => 'viewer12345',
         ]);
     }
 }
